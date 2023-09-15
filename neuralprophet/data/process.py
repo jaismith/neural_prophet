@@ -274,9 +274,9 @@ def _prepare_dataframe_to_predict(model, df: pd.DataFrame, max_lags: int, freq: 
         if len(df_i.columns) == 1 and "ds" in df_i:
             if max_lags != 0:
                 raise ValueError("only datestamps provided but y values needed for auto-regression.")
-            df_i = _check_dataframe(model, df_i, check_y=False, exogenous=False)
+            df_i = _check_dataframe(model, df_i, check_y=False, exogenous=False, future=True)
         else:
-            df_i = _check_dataframe(model, df_i, check_y=model.max_lags > 0, exogenous=False)
+            df_i = _check_dataframe(model, df_i, check_y=model.max_lags > 0, exogenous=False, future=True)
             # fill in missing nans except for nans at end
             df_i = _handle_missing_data(
                 df=df_i,
@@ -394,7 +394,7 @@ def _check_dataframe(
         exogenous : bool
             whether to check covariates, regressors and events column names
         future : bool
-            whether this function is called by make_future_dataframe()
+            whether this function is called for prediction (e.g. by _make_future_dataframe)
 
     Returns
     -------

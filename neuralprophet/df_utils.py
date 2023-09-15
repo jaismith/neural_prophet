@@ -472,11 +472,10 @@ def check_dataframe(
     if regressors is not None:
         for reg in regressors:
             if len(df[reg].unique()) < 2:
-                log.warning(
-                    "Encountered future regressor with only unique values in training set across all IDs."
-                    "Automatically removed variable."
-                )
-                regressors_to_remove.append(reg)
+                log.warning("Encountered future regressor with only unique values in dataframe across all IDs.")
+                if not future:
+                    log.warning("Automatically removed variable.")
+                    regressors_to_remove.append(reg)
         if isinstance(regressors, list):
             columns.extend(regressors)
         else:  # treat as dict
@@ -484,11 +483,10 @@ def check_dataframe(
     if covariates is not None:
         for covar in covariates:
             if len(df[covar].unique()) < 2:
-                log.warning(
-                    "Encountered lagged regressor with only unique values in training set across all IDs."
-                    "Automatically removed variable."
-                )
-                lag_regressors_to_remove.append(covar)
+                log.warning("Encountered lagged regressor with only unique values in dataframe set across all IDs.")
+                if not future:
+                    log.warning("Automatically removed variable.")
+                    lag_regressors_to_remove.append(covar)
         if isinstance(covariates, list):
             columns.extend(covariates)
         else:  # treat as dict
@@ -517,8 +515,6 @@ def check_dataframe(
         if df.loc[df.loc[:, name].notnull()].shape[0] < 1:
             raise ValueError(f"Dataframe column {name!r} only has NaN rows.")
 
-    if future:
-        return df, regressors_to_remove, lag_regressors_to_remove
     if len(regressors_to_remove) > 0:
         regressors_to_remove = list(set(regressors_to_remove))
         df = df.drop(regressors_to_remove, axis=1)

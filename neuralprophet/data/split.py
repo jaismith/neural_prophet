@@ -239,7 +239,7 @@ def _make_future_dataframe(
     if len(df) > 0:
         if len(df.columns) == 1 and "ds" in df:
             assert max_lags == 0
-            df = _check_dataframe(model, df, check_y=False, exogenous=False)
+            df = _check_dataframe(model, df, check_y=False, exogenous=False, future=True)
         else:
             df = _check_dataframe(model, df, check_y=max_lags > 0, exogenous=True, future=True)
     # future data
